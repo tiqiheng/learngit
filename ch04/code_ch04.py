@@ -234,3 +234,74 @@ np.savez('array_archive.npz', a=arr, b=arr)
 
 arch = np.load('array_archive.npz')
 arch['b']
+#####$$存取文件$$#####
+"F:/OutJob_tiqh/DataAnalysisWithPython/learngit/ch04/array_ex.txt"
+arr = np.loadtxt('F:/OutJob_tiqh/DataAnalysisWithPython/learngit/ch04/array_ex.txt', delimiter = ',')
+
+#####$$线性代数$$#####
+x = np.array([[1.,2.,3.],[4.,5.,6.]])
+
+y = np.array([[6.,23.],[-1,7],[8,9]])
+
+x.dot(y) #相当于np.dot(x,y)
+
+from numpy.linalg import inv, qr
+
+X = randn(5,5)
+
+mat = X.T.dot(X)
+
+inv(mat)
+
+mat.dot(inv(mat))
+
+q, r = qr(mat)
+
+
+#####$$随机数生成$$#####
+
+samples = np.random.normal(size=(4,4))
+
+from random import normalvariate
+N = 1000000
+
+%timeit samples = [normalvariate(0,1) for _ in xrange(N)]
+
+%timeit np.random.normal(size=N)
+
+######$$随机漫步$$#####
+import random
+position = 0
+walk = [position]
+
+steps = 1000
+
+for i in xrange(steps):
+	step = 1 if random.randint(0,1) else -1
+	position += step
+	walk.append(position)
+
+#另一种实现方式
+nsteps = 1000
+
+draws = np.random.randint(0,2, size=nsteps)
+
+steps = np.where(draws > 0, 1, -1)
+
+walk = steps.cumsum()
+
+nwalks = 5000
+nsteps = 1000
+
+draws = np.random.randint(0,2,size=(nwalks, nsteps)) #0或1
+
+steps = np.where(draws > 0, 1, -1)
+
+walks = steps.cumsum(1)
+
+
+hist30 = (np.abs(walks) >= 30).any(1)
+
+crossing_times = (np.abs(walks[hist30]) >= 30).argmax(1)
+
+crossing_times.mean()
