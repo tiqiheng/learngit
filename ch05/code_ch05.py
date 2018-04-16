@@ -6,6 +6,7 @@ from pandas import Series, DataFrame
 
 import pandas as pd
 
+import numpy as np
 #####$$Series$$#####
 
 obj = Series([4,7,-5,3])
@@ -111,7 +112,44 @@ states = ['Texas', 'Utah', 'California']
 
 frame.reindex(columns = states)
 
-frame.reindex(index=['a', 'b', 'c', 'd'], method='ffill', columns=states)
+#frame.reindex(index=['a', 'b', 'c', 'd'], method='ffill', columns=states)
 
 frame.reindex(index=['a', 'b', 'c', 'd'], method= 'ffill') #正确写法
 
+obj = Series(np.arange(5.), index = ['a', 'b', 'c', 'd', 'e'])
+ 
+new_obj = obj.drop('c')
+
+data = DataFrame(np.arange(16).reshape((4,4)), index = ['Ohio','Colorado','Utah','New York'], columns = ['one', 'two', 'three', 'four'])
+
+data.drop(['Colorado','Ohio'])
+
+data.drop('two', axis = 1) #不改变data的值
+
+data.drop(['two', 'four'], axis=1)
+
+obj = Series(np.arange(4.), index=['a', 'b', 'c', 'd'])
+
+obj['b']
+
+data[:2]
+
+data[data['three']>5]
+
+data[data<5.] = 0
+
+data. ix[['Colorado','Utah'], [3,0,1]]
+
+data.iloc[2]
+
+data.loc[:'Utah', 'two']
+
+data.ix[data.three > 5, :3]
+
+s1 = Series([7.3,-2.5,3.4,1.5], index=['a', 'c', 'd', 'e'])
+
+s2 = Series([-2.1, 3.6, -1.5, 4, 3.1], index=['a', 'c', 'e', 'f', 'g'])
+
+df1 = DataFrame(np.arange(9.).reshape((3,3)), columns=list('bcd'), index=['Ohio', 'Texas', 'Colorado'])
+
+df2 = DataFrame(np.arange(12.).reshape((4,3)), columns=list('bde'), index=['Utah', 'Ohio', 'Texas', 'Oregon'])
