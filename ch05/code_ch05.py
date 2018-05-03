@@ -29,6 +29,7 @@ obj4.isnull()
 
 obj4.name = 'population'
 
+
 obj4.index.name = 'state'
 
 obj.index = ['California', 'Ohio', 'Oregon', 'Texas']
@@ -287,4 +288,199 @@ d    0
 dtype: int64
 
 frame = DataFrame(np.arange(8).reshape((2,4)), index=['three', 'one'], columns=['d', 'a', 'b', 'c'])
+
+obj = Series([4,7,-3,2])
+obj.sort_values()
+obj = Series([4, np.nan, 7, np.nan, -3, 2])
+
+frame = DataFrame({'b':[4,7,-3,2], 'a':[0,1,0,1]})
+
+frame.sort_index(by=['a', 'b'])
+
+obj.rank(method='first', na_option='bottom') #排序
+
+#####$$带重复值的轴索引$$#####
+
+obj = Series(range(5), index=['a', 'a' , 'b', 'b', 'c'])
+
+In [8]: obj.index.is_unique
+Out[8]: False
+
+In [12]: df = DataFrame(np.random.randn(4,3), index = ['a', 'a' , 'b', 'b'])
+
+In [13]: df
+Out[13]:
+          0         1         2
+a -1.049870  0.405578  0.256445
+a -1.391671 -1.057513  0.699057
+b -0.318720  0.128407  0.292529
+b  0.002353  2.884667  1.344446
+
+In [14]: df.loc['b']
+Out[14]:
+          0         1         2
+b -0.318720  0.128407  0.292529
+b  0.002353  2.884667  1.344446
+
+df = DataFrame([[1.4,np.nan], [7.1,-4.5],[np.nan,np.nan], [0.75,-1.3]], index = ['a', 'b', 'c', 'd'], columns=['one', 'two'])
+
+df.sum()
+
+#描述统计值
+
+In [25]: df.describe()
+Out[25]:
+            one       two
+count  3.000000  2.000000
+mean   3.083333 -2.900000
+std    3.493685  2.262742
+min    0.750000 -4.500000
+25%    1.075000 -3.700000
+50%    1.400000 -2.900000
+75%    4.250000 -2.100000
+max    7.100000 -1.300000
+
+#####$$相关系数和协方差$$#####
+
+#由于yahoo财经数据迁移数据提取不到，暂时未做
+
+#####$$唯一值，值计数以及成员资格$$#####
+obj = Series(['c', 'a', 'd', 'a', 'a', 'b', 'b', 'c', 'c'])
+
+obj.value_counts()
+
+pd.value_counts(obj.values, sort=False)
+
+data = DataFrame(
+{'Qu1': [1,3,4,3,4],
+"Qu2" : [2,3,1,2,3],
+"Qu3" : [1,5,2,4,4]
+}
+)
+
+
+In [23]: data = DataFrame(^M
+    ...: {'Qu1': [1,3,4,3,4],^M
+    ...: "Qu2" : [2,3,1,2,3],^M
+    ...: "Qu3" : [1,5,2,4,4]^M
+    ...: }^M
+    ...: )
+
+In [24]: data
+Out[24]:
+   Qu1  Qu2  Qu3
+0    1    2    1
+1    3    3    5
+2    4    1    2
+3    3    2    4
+4    4    3    4
+
+In [25]: data.apply(pd.value_counts)
+Out[25]:
+   Qu1  Qu2  Qu3
+1  1.0  1.0  1.0
+2  NaN  2.0  1.0
+3  2.0  2.0  NaN
+4  2.0  NaN  2.0
+5  NaN  NaN  1.0
+
+In [26]: data.apply(pd.value_counts).fillna(0)
+Out[26]:
+   Qu1  Qu2  Qu3
+1  1.0  1.0  1.0
+2  0.0  2.0  1.0
+3  2.0  2.0  0.0
+4  2.0  0.0  2.0
+5  0.0  0.0  1.0
+
+#####$$处理缺失值$$#####
+
+string_data = Series(['abc', 'bcd', np.nan, 'def'])
+
+
+In [40]: string_data.isnull
+Out[40]:
+<bound method Series.isnull of 0    None
+1     bcd
+2     NaN
+3     def
+dtype: object>
+
+In [41]: string_data.isnull()
+Out[41]:
+0     True
+1    False
+2     True
+3    False
+dtype: bool
+
+
+#####$$滤除缺失数据$$#####
+
+from numpy import nan as NA
+
+data = Series([1, NA, 3.5, NA, 7])
+
+In [10]: data.dropna()
+Out[10]:
+0    1.0
+2    3.5
+4    7.0
+dtype: float64
+
+In [11]: data[data.notnull()]
+Out[11]:
+0    1.0
+2    3.5
+4    7.0
+dtype: float64
+
+data = DataFrame([[1., 6.5, 3.], [1., NA, NA], [NA, NA, NA], [NA, 6.5, 3.]])
+
+In [15]: data.dropna(how = 'all')
+Out[15]:
+     0    1    2
+0  1.0  6.5  3.0
+1  1.0  NaN  NaN
+3  NaN  6.5  3.0
+
+In [16]: data[4] = NA
+
+In [17]: data
+Out[17]:
+     0    1    2   4
+0  1.0  6.5  3.0 NaN
+1  1.0  NaN  NaN NaN
+2  NaN  NaN  NaN NaN
+3  NaN  6.5  3.0 NaN
+
+In [18]: data.dropna(axis = 1, how ='all')
+Out[18]:
+     0    1    2
+0  1.0  6.5  3.0
+1  1.0  NaN  NaN
+2  NaN  NaN  NaN
+3  NaN  6.5  3.0
+
+df = DataFrame(np.random.randn(7,3))
+
+df.iloc[:4,1] = NA; df.ix[:2, 2] = NA
+
+In [23]: df.dropna(thresh = 2)
+Out[23]:
+          0         1         2
+3 -0.358241       NaN -0.670095
+4  0.023879  1.523128 -3.034558
+5  0.949051 -0.624230  0.366703
+6 -0.748698  0.133064 -0.654409
+
+In [24]: df.dropna(thresh = 3)
+Out[24]:
+          0         1         2
+4  0.023879  1.523128 -3.034558
+5  0.949051 -0.624230  0.366703
+6 -0.748698  0.133064 -0.654409
+
+
+#####$$填充缺失数据$$#####
 
