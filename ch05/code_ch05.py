@@ -483,4 +483,203 @@ Out[24]:
 
 
 #####$$填充缺失数据$$#####
+In [25]: df.fillna(0)
+Out[25]:
+          0         1         2
+0 -0.407754  0.000000  0.000000
+1 -0.119154  0.000000  0.000000
+2  1.113036  0.000000  0.000000
+3 -0.358241  0.000000 -0.670095
+4  0.023879  1.523128 -3.034558
+5  0.949051 -0.624230  0.366703
+6 -0.748698  0.133064 -0.654409
 
+In [26]: df.fillna({1:0.5,3:-1})
+Out[26]:
+          0         1         2
+0 -0.407754  0.500000       NaN
+1 -0.119154  0.500000       NaN
+2  1.113036  0.500000       NaN
+3 -0.358241  0.500000 -0.670095
+4  0.023879  1.523128 -3.034558
+5  0.949051 -0.624230  0.366703
+6 -0.748698  0.133064 -0.654409
+
+#总是返回被填充对象的引用，inplace起到的作用
+In [27]: _ = df.fillna(0, inplace=True)
+
+In [28]: df
+Out[28]:
+          0         1         2
+0 -0.407754  0.000000  0.000000
+1 -0.119154  0.000000  0.000000
+2  1.113036  0.000000  0.000000
+3 -0.358241  0.000000 -0.670095
+4  0.023879  1.523128 -3.034558
+5  0.949051 -0.624230  0.366703
+6 -0.748698  0.133064 -0.654409
+
+In [29]: df = DataFrame(np.random.randn(6,3))
+
+In [30]: df.iloc[:2,1] = NA
+
+In [31]: df.iloc[4:, 2] = NA
+
+In [34]: df.fillna(method = 'ffill')
+Out[34]:
+          0         1         2
+0 -0.403845       NaN -1.517180
+1 -0.498031       NaN  0.390021
+2 -1.257538 -1.470415 -0.585982
+3 -1.172443  0.065520  0.535849
+4  2.572929  0.102688  0.535849
+5  0.493872  0.833607  0.535849
+
+In [37]: df.fillna(method='bfill')
+Out[37]:
+          0         1         2
+0 -0.403845 -1.470415 -1.517180
+1 -0.498031 -1.470415  0.390021
+2 -1.257538 -1.470415 -0.585982
+3 -1.172443  0.065520  0.535849
+4  2.572929  0.102688       NaN
+5  0.493872  0.833607       NaN
+
+
+#####$$层次化索引$$#####
+
+ data = Series(np.random.randn(10), index=[['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'd', 'd'], [1,2,3,1,2,3,1,2, 2,3]])
+ 
+ In [40]: data
+Out[40]:
+a  1    0.274084
+   2   -1.190673
+   3   -0.418101
+b  1   -0.719831
+   2    1.559763
+   3    1.128530
+c  1   -0.302453
+   2    0.255061
+d  2    1.462377
+   3   -0.651053
+dtype: float64
+
+frame = DataFrame(np.arange(12).reshape((4,3)), index=[['a','a','b','b'],[1,2,1,2]], columns=[['Ohio', 'Ohio', 'Colorado'], ['Green', 'Red', 'Green']])
+
+
+In [60]: frame.index.names = ['key1', 'key2']
+
+In [61]: frame.columns.names = ['state', 'color']
+
+In [62]: frame
+Out[62]:
+state      Ohio     Colorado
+color     Green Red    Green
+key1 key2
+a    1        0   1        2
+     2        3   4        5
+b    1        6   7        8
+     2        9  10       11
+	 
+
+pd.MultiIndex.from_arrays([['Ohio', 'Ohio', 'Colorado'], ['Green', 'Red', 'Green']], names=['state', 'color'])
+
+
+#####$$重排分级顺序$$#####
+frame.swaplevel('key1', 'key2')
+
+
+In [70]: frame.swaplevel('key1', 'key2')
+Out[70]:
+state      Ohio     Colorado
+color     Green Red    Green
+key2 key1
+1    a        0   1        2
+2    a        3   4        5
+1    b        6   7        8
+2    b        9  10       11
+
+In [71]: frame.sortlevel(1)
+D:\Python27\Scripts\ipython:1: FutureWarning: sortlevel is deprecated, use sort_index(level= ...)
+Out[71]:
+state      Ohio     Colorado
+color     Green Red    Green
+key1 key2
+a    1        0   1        2
+b    1        6   7        8
+a    2        3   4        5
+b    2        9  10       11
+
+In [72]: frame.swaplevel(0,1).sortlevel(0)
+D:\Python27\Scripts\ipython:1: FutureWarning: sortlevel is deprecated, use sort_index(level= ...)
+Out[72]:
+state      Ohio     Colorado
+color     Green Red    Green
+key2 key1
+1    a        0   1        2
+     b        6   7        8
+2    a        3   4        5
+     b        9  10       11
+
+#####$$根据汇总级别统计$$#####
+
+
+In [77]: frame.sum(level='key2')
+Out[77]:
+state  Ohio     Colorado
+color Green Red    Green
+key2
+1         6   8       10
+2        12  14       16
+
+In [78]: frame.sum(level='color', axis=1)
+Out[78]:
+color      Green  Red
+key1 key2
+a    1         2    1
+     2         8    4
+b    1        14    7
+     2        20   10
+	 
+#####$$使用DataFrame的列$$#####
+
+frame = DataFrame({'a':range(7), 'b':range(7,0,-1), 'c' : ['one','one','one','two','two','two','two'], 'd':[0,1,2,0,1,2,3]})
+
+#设置索引
+In [83]: frame.set_index(['c', 'd'])
+Out[83]:
+       a  b
+c   d
+one 0  0  7
+    1  1  6
+    2  2  5
+two 0  3  4
+    1  4  3
+    2  5  2
+    3  6  1
+
+#取消索引
+In [85]: frame.reset_index()
+Out[85]:
+   index  a  b    c  d
+0      0  0  7  one  0
+1      1  1  6  one  1
+2      2  2  5  one  2
+3      3  3  4  two  0
+4      4  4  3  two  1
+5      5  5  2  two  2
+6      6  6  1  two  3
+
+#####$$整数索引$$#####
+#对于标签值有效
+In [89]: ser2 = Series(np.arange(3.), index=['a','b','c'])
+
+In [90]: ser2[-1]
+Out[90]: 2.0
+
+
+In [94]: ser3.iloc[2]
+Out[94]: 2
+
+In [95]: ser3.loc[-5]
+Out[95]: 0
