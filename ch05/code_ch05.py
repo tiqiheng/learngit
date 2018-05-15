@@ -564,6 +564,8 @@ d  2    1.462377
    3   -0.651053
 dtype: float64
 
+data.unstack()
+
 frame = DataFrame(np.arange(12).reshape((4,3)), index=[['a','a','b','b'],[1,2,1,2]], columns=[['Ohio', 'Ohio', 'Colorado'], ['Green', 'Red', 'Green']])
 
 

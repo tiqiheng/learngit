@@ -248,9 +248,87 @@ with open('C:\Users\Administrator\learngit\ch06\\mydata.csv', 'w') as f:
 	writer.writerow(('4', '5', '6'))
 	writer.writerow(('7', '8', '9'))
 	
-In [227]: !type C:\Users\Administrator\learngit\ch06\\mydata.csv
 one;two;three
 1;2;3
 4;5;6
 7;8;9
 
+
+obj = """
+{"name":"Wes",
+"places_lived":["United States", "Spain", "Germany"],
+"pet":null,
+"siblings":[{"name":"Scott", "age":25, "pet":"Zuko"},
+{"name":"Katie", "age":33, "pet":"Cisco"}]
+}
+"""
+
+In [229]: import json
+
+In [230]: result = json.loads(obj)
+
+In [231]: result
+Out[231]:
+{u'name': u'Wes',
+ u'pet': None,
+ u'places_lived': [u'United States', u'Spain', u'Germany'],
+ u'siblings': [{u'age': 25, u'name': u'Scott', u'pet': u'Zuko'},
+  {u'age': 33, u'name': u'Katie', u'pet': u'Cisco'}]}
+
+In [232]: asjson = json.dumps(result)
+In [235]: siblings = DataFrame(result['siblings'],columns=['name', 'age'])
+
+In [236]: siblings
+Out[236]:
+    name  age
+0  Scott   25
+1  Katie   33
+
+
+#####$$XML和HTML：Web信息收集$$#####
+url = """http://finance.yahoo.com/q/op?s=AAPL+Options"""
+
+In [239]: from lxml.html import parse
+
+In [240]: from urllib2 import urlopen
+
+In [241]: parsed = parse(urlopen("""http://finance.yahoo.com/q/op?s=AAPL+Options"""))
+
+In [242]: doc = parsed.getroot()
+
+In [243]: doc
+Out[243]: <Element html at 0x6314720>
+
+In [244]: links = doc.findall('.//a')
+
+In [245]: links[15:20]
+Out[245]:
+[<Element a at 0x6314f60>,
+ <Element a at 0x6314f90>,
+ <Element a at 0x6314fc0>,
+ <Element a at 0x6087b40>,
+ <Element a at 0x60878a0>]
+ 
+ In [249]: Xpath?
+Object `Xpath` not found.
+
+In [250]: lnk = links[28]
+
+In [251]: lnk.get('href')
+Out[251]: '/quote/AAPL180511C00149000?p=AAPL180511C00149000'
+
+In [252]: lnk.text_content()
+Out[252]: 'AAPL180511C00149000'
+
+urls = [lnk.get('href') for lnk in doc.findall('.//a')]
+
+
+tables = doc.findall('.//table')
+
+def _unpack(row, kind = 'td'):
+	elts = row.findall('.//%s'%kind)
+	return [val.text_content() for val in elts
+	
+
+
+#####$$XML和HTML：Web信息收集$$#####
