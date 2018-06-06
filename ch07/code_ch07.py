@@ -920,3 +920,68 @@ pattern = r'[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}'
 
 
 regex = re.compile(pattern, flags=re.IGNORECASE)
+
+In [111]: regex.findall(text)
+Out[111]: ['dave@google.com', 'steve@gmail.com', 'rob@gmail.com', 'ryan@yahoo.com']
+
+In [112]: m = regex.search(text)
+
+In [113]: m
+Out[113]: <_sre.SRE_Match at 0x5f995d0>
+
+In [114]: text[m.start():m.end()]
+Out[114]: 'dave@google.com'
+
+pattern = r'([A-Z0-9._%+-]+)@([A-Z0-9.-]+)\.([A-Z]{2,4})'
+
+regex = re.compile(pattern, flags=re.IGNORECASE)
+
+In [118]: m = regex.match('wesm@bright.net')
+
+In [119]: m
+Out[119]: <_sre.SRE_Match at 0x5f4ade0>
+
+In [120]: m.group()
+Out[120]: 'wesm@bright.net'
+
+In [121]: m.groups()
+Out[121]: ('wesm', 'bright', 'net')
+
+regex.findall(text)
+
+In [122]: regex.findall(text)
+Out[122]:
+[('dave', 'google', 'com'),
+ ('steve', 'gmail', 'com'),
+ ('rob', 'gmail', 'com'),
+ ('ryan', 'yahoo', 'com')]
+
+In [123]: print regex.sub(r'Username:\1, Domain:\2, Suffix:\3', text)
+Dave Username:dave, Domain:google, Suffix:com
+Steve Username:steve, Domain:gmail, Suffix:com
+Rob Username:rob, Domain:gmail, Suffix:com
+Ryan Username:ryan, Domain:yahoo, Suffix:com
+
+
+pattern = r'(?P<username>[A-Z0-9._%+-]+)@(?P<domain>[A-Z0-9.-]+)\.(?P<suffix>[A-Z]{2,4})'
+
+regex = re.compile(pattern, flags = re.IGNORECASE|re.VERBOSE)
+
+m = regex.match('wesm@bright.net')
+
+In [128]: m.groupdict()
+Out[128]: {'domain': 'bright', 'suffix': 'net', 'username': 'wesm'}
+
+#####$$pandas中矢量化的字符串函数$$#####
+
+data = {
+'Dave': 'dave@google.com' ,
+'Steve': 'steve@gmail.com',
+'Rob': 'rob@gmail.com'    ,
+'Wes': np.nan ,
+}
+
+
+import json
+
+db = json.load(open("C:\\Users\\Administrator\\learngit\\ch07\\database.json"))
